@@ -23,9 +23,8 @@ if have_header('mpfr.h') && have_library('mpfr') && have_header('mpc.h') && have
   ruby_mpfr_header_dir = nil
   begin
     require "rubygems"
-    if (spec = Gem.source_index.find_name("ruby-mpfr")).any?
-      ruby_mpfr_header_dir = File.join(spec.last.full_gem_path, 'ext/mpfr')
-    end
+    spec = Gem::Specification.find_by_name("ruby-mpfr")
+    ruby_mpfr_header_dir = File.join(spec.full_gem_path, 'ext/mpfr')
   rescue LoadError
   end
   unless find_header("ruby_mpfr.h", ruby_mpfr_header_dir)
