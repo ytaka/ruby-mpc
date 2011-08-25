@@ -20,6 +20,16 @@ dir_config("mpfr")
 dir_config("mpc")
 dir_config("gmp")
 if have_header('mpfr.h') && have_library('mpfr') && have_header('mpc.h') && have_library('mpc') && have_header('gmp.h') && have_library('gmp')
+  ruby_mpfr_header_dir = nil
+  begin
+    require "rubygems"
+    if (spec = Gem.source_index.find_name("ruby-mpfr")).any?
+      ruby_mpfr_header_dir = File.join(spec.last.full_gem_path, 'ext/mpfr')
+    end
+  rescue LoadError
+  end
+  unless find_header("ruby_mpfr.h", ruby_mpfr_header_dir)
+    header_not_found("ruby_mpfr.h")
+  end
   create_makefile("mpc")
 end
-
