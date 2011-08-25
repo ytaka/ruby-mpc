@@ -1,7 +1,7 @@
 = ruby-mpc
 
-* http://rubyforge.org/projects/ruby-mpfr/
-* http://gemcutter.org/gems/ruby-mpc/
+* https://github.com/ytaka/ruby-mpc/
+* http://rubygems.org/gems/ruby-mpc/
 
 == Description:
 
@@ -28,7 +28,7 @@ You must require 'mpfr' to use 'mpc'.
 == Requirements:
 
 * Ruby[http://www.ruby-lang.org/] 1.9.1 or later
-* MPFR[http://www.mpfr.org/] 2.4.1 or later
+* MPFR[http://www.mpfr.org/] 3.0.0 or later
 * MPC[http://www.multiprecision.org/] 0.8.1 or later
 * ruby-mpfr
 
@@ -37,7 +37,7 @@ The package of rubygems of ruby-mpfr is provided.
 You can install ruby-mpfr with the following command
 in the system satisfying the above requirements.
  
- $ sudo gem install ruby-mpc
+ $ gem install ruby-mpc
 
 == License:
 
