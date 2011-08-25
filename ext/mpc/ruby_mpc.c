@@ -253,14 +253,15 @@ static VALUE r_mpc_coerce(VALUE self, VALUE other)
 static VALUE r_mpc_inspect(VALUE self)
 {
   MPC *ptr_s;
-  r_mpc_get_struct(ptr_s, self);
   char *ret_str;
+  VALUE ret_val;
+  r_mpc_get_struct(ptr_s, self);
   if(!mpfr_asprintf(&ret_str, "#<MPC:%lx,['%.Re','%.Re'],[%d,%d]>",
 		    NUM2LONG(rb_funcall(self, object_id, 0)), mpc_realref (ptr_s), mpc_imagref (ptr_s),
 		    mpfr_get_prec(mpc_realref (ptr_s)), mpfr_get_prec(mpc_imagref (ptr_s)))) {
     rb_raise(rb_eFatal, "Can not allocate a string by mpfr_asprintf.");
   }
-  VALUE ret_val = rb_str_new2(ret_str);
+  ret_val = rb_str_new2(ret_str);
   mpfr_free_str(ret_str);
   return ret_val;
 }
@@ -272,9 +273,9 @@ static VALUE r_mpc_inspect(VALUE self)
 static VALUE r_mpc_real (VALUE self)
 {
   MPC *ptr_self;
-  r_mpc_get_struct(ptr_self, self);
   VALUE ret_val;
   MPFR *ptr_ret;
+  r_mpc_get_struct(ptr_self, self);
   r_mpfr_make_struct_init2(ret_val, ptr_ret, mpfr_get_prec(mpc_realref(ptr_self)));
   r_mpc_set_fr_function_state(mpc_real(ptr_ret, ptr_self, MPC_RNDNN));
   return ret_val;
@@ -284,9 +285,9 @@ static VALUE r_mpc_real (VALUE self)
 static VALUE r_mpc_imag (VALUE self)
 {
   MPC *ptr_self;
-  r_mpc_get_struct(ptr_self, self);
   VALUE ret_val;
   MPFR *ptr_ret;
+  r_mpc_get_struct(ptr_self, self);
   r_mpfr_make_struct_init2(ret_val, ptr_ret, mpfr_get_prec(mpc_imagref(ptr_self)));
   r_mpc_set_fr_function_state(mpc_imag(ptr_ret, ptr_self, MPC_RNDNN));
   return ret_val;
@@ -297,11 +298,11 @@ static VALUE r_mpc_arg (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 0, 2, argc, argv);
   MPC *ptr_self;
-  r_mpc_get_struct(ptr_self, self);
   VALUE ret_val;
   MPFR *ptr_ret;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 0, 2, argc, argv);
+  r_mpc_get_struct(ptr_self, self);
   r_mpfr_make_struct_init2(ret_val, ptr_ret, prec);
   r_mpc_set_fr_function_state(mpc_arg(ptr_ret, ptr_self, rnd));
   return ret_val;
@@ -312,11 +313,10 @@ static VALUE r_mpc_proj (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 0, 2, argc, argv);
-  MPC *ptr_self;
-  r_mpc_get_struct(ptr_self, self);
+  MPC *ptr_self, *ptr_ret;
   VALUE ret_val;
-  MPC *ptr_ret;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 0, 2, argc, argv);
+  r_mpc_get_struct(ptr_self, self);
   r_mpc_make_struct_init2(ret_val, ptr_ret, prec);
   r_mpc_set_c_function_state(mpc_proj(ptr_ret, ptr_self, rnd));
   return ret_val;
@@ -424,9 +424,9 @@ static VALUE r_mpc_mul_i (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_self, *ptr_return;
   VALUE val_ret;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   r_mpc_get_struct(ptr_self, self);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_mul_i(ptr_return, ptr_self, NUM2INT(argv[0]), rnd));
@@ -438,9 +438,9 @@ static VALUE r_mpc_neg (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 0, 2, argc, argv);
   MPC *ptr_self, *ptr_return;
   VALUE val_ret;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 0, 2, argc, argv);
   r_mpc_get_struct(ptr_self, self);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_neg(ptr_return, ptr_self, rnd));
@@ -452,9 +452,9 @@ static VALUE r_mpc_conj (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 0, 2, argc, argv);
   MPC *ptr_self, *ptr_return;
   VALUE val_ret;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 0, 2, argc, argv);
   r_mpc_get_struct(ptr_self, self);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_conj(ptr_return, ptr_self, rnd));
@@ -466,10 +466,10 @@ static VALUE r_mpc_abs (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 0, 2, argc, argv);
   MPC *ptr_self;
   MPFR *ptr_return;
   VALUE val_ret;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 0, 2, argc, argv);
   r_mpc_get_struct(ptr_self, self);
   r_mpfr_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_fr_function_state(mpc_abs(ptr_return, ptr_self, rnd));
@@ -481,10 +481,10 @@ static VALUE r_mpc_norm (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 0, 2, argc, argv);
   MPC *ptr_self;
   MPFR *ptr_return;
   VALUE val_ret;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 0, 2, argc, argv);
   r_mpc_get_struct(ptr_self, self);
   r_mpfr_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_fr_function_state(mpc_norm(ptr_return, ptr_self, rnd));
@@ -498,10 +498,11 @@ static VALUE r_mpc_math_add(int argc, VALUE *argv, VALUE self)
 {
   mp_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
   MPC *ptr_arg1, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg1, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
 
@@ -528,10 +529,11 @@ static VALUE r_mpc_math_sub(int argc, VALUE *argv, VALUE self)
 {
   mp_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
   MPC *ptr_arg1, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg1, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
 
@@ -563,10 +565,11 @@ static VALUE r_mpc_math_mul(int argc, VALUE *argv, VALUE self)
 {
   mp_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
   MPC *ptr_arg1, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg1, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
 
@@ -593,10 +596,11 @@ static VALUE r_mpc_math_div(int argc, VALUE *argv, VALUE self)
 {
   mp_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
   MPC *ptr_arg1, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg1, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
 
@@ -622,10 +626,11 @@ static VALUE r_mpc_math_mul_2exp (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_mul_2exp(ptr_return, ptr_arg, NUM2LONG(argv[1]), rnd));
@@ -637,10 +642,11 @@ static VALUE r_mpc_math_div_2exp (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_div_2exp(ptr_return, ptr_arg, NUM2LONG(argv[1]), rnd));
@@ -653,10 +659,11 @@ static VALUE r_mpc_math_sqr (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_sqr(ptr_return, ptr_arg, rnd));
@@ -668,10 +675,11 @@ static VALUE r_mpc_math_sqrt (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_sqrt(ptr_return, ptr_arg, rnd));
@@ -683,10 +691,11 @@ static VALUE r_mpc_math_pow(int argc, VALUE *argv, VALUE self)
 {
   mp_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
   MPC *ptr_arg1, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 2, 4, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg1, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
 
@@ -716,10 +725,11 @@ static VALUE r_mpc_math_exp (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_exp(ptr_return, ptr_arg, rnd));
@@ -731,10 +741,11 @@ static VALUE r_mpc_math_log (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_log(ptr_return, ptr_arg, rnd));
@@ -746,10 +757,11 @@ static VALUE r_mpc_math_sin (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_sin(ptr_return, ptr_arg, rnd));
@@ -761,10 +773,11 @@ static VALUE r_mpc_math_cos (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_cos(ptr_return, ptr_arg, rnd));
@@ -776,10 +789,11 @@ static VALUE r_mpc_math_tan (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_tan(ptr_return, ptr_arg, rnd));
@@ -791,10 +805,11 @@ static VALUE r_mpc_math_sinh (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_sinh(ptr_return, ptr_arg, rnd));
@@ -806,10 +821,11 @@ static VALUE r_mpc_math_cosh (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_cosh(ptr_return, ptr_arg, rnd));
@@ -821,10 +837,11 @@ static VALUE r_mpc_math_tanh (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_tanh(ptr_return, ptr_arg, rnd));
@@ -836,10 +853,11 @@ static VALUE r_mpc_math_asin (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_asin(ptr_return, ptr_arg, rnd));
@@ -851,10 +869,11 @@ static VALUE r_mpc_math_acos (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_acos(ptr_return, ptr_arg, rnd));
@@ -866,10 +885,11 @@ static VALUE r_mpc_math_atan (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_atan(ptr_return, ptr_arg, rnd));
@@ -881,10 +901,11 @@ static VALUE r_mpc_math_asinh (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_asinh(ptr_return, ptr_arg, rnd));
@@ -896,10 +917,11 @@ static VALUE r_mpc_math_acosh (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_acosh(ptr_return, ptr_arg, rnd));
@@ -911,10 +933,11 @@ static VALUE r_mpc_math_atanh (int argc, VALUE *argv, VALUE self)
 {
   mpc_rnd_t rnd;
   mp_prec_t prec;
-  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
   MPC *ptr_arg, *ptr_return;
   VALUE val_ret;
-  volatile VALUE tmp_argv0 = r_mpc_new_c_obj(argv[0]);
+  volatile VALUE tmp_argv0;
+  r_mpc_get_rnd_prec_from_optional_arguments(&rnd, &prec, 1, 3, argc, argv);
+  tmp_argv0 = r_mpc_new_c_obj(argv[0]);
   r_mpc_get_struct(ptr_arg, tmp_argv0);
   r_mpc_make_struct_init2(val_ret, ptr_return, prec);
   r_mpc_set_c_function_state(mpc_atanh(ptr_return, ptr_arg, rnd));
