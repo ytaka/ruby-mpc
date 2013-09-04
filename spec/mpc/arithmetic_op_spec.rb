@@ -1,8 +1,4 @@
-require File.dirname(__FILE__) + '/spec_helper.rb'
-
-require "generate_complex_number.rb"
-
-MPFR.set_default_prec(256)
+require File.join(File.dirname(__FILE__), "../spec_helper.rb")
 
 ARITHMETIC_NUM_OF_CALCULATE = 1000
 
@@ -14,6 +10,11 @@ def check_mpc_arithmetic_op(arg1, arg2, error = 10e-10, &block)
 end
 
 describe MPC, "when calculating" do
+  before(:all) do
+    @prec_old = MPFR.get_default_prec
+    MPFR.set_default_prec(256)
+  end
+
   it "should be complex number" do
     args = GenerateComplex.float_arguments(ARITHMETIC_NUM_OF_CALCULATE)
     args.each_index do |i|
@@ -26,5 +27,7 @@ describe MPC, "when calculating" do
     end
   end
 
+  after(:all) do
+    MPFR.set_default_prec(@prec_old)
+  end
 end
-

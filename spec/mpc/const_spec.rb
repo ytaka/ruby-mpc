@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/spec_helper.rb'
+require File.join(File.dirname(__FILE__), "../spec_helper.rb")
 
 describe MPC, "when returning constants" do
   it "should have constants" do

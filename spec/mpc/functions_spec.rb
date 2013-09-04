@@ -1,8 +1,4 @@
-require File.dirname(__FILE__) + '/spec_helper.rb'
-
-require "generate_complex_number.rb"
-
-MPFR.set_default_prec(512)
+require File.join(File.dirname(__FILE__), "../spec_helper.rb")
 
 FUNCTIONS_NUM_OF_CALCULATE = 100
 
@@ -18,6 +14,11 @@ def check_mpc_function(arg1, error = 10e-10, &block)
 end
 
 describe MPC, "when calculating some functions" do
+  before(:all) do
+    @prec_old = MPFR.get_default_prec
+    MPFR.set_default_prec(512)
+  end
+
   it "should be the same result as Complex class" do
     args = GenerateComplex.float_arguments(FUNCTIONS_NUM_OF_CALCULATE)
     args.each do |a|
@@ -26,5 +27,8 @@ describe MPC, "when calculating some functions" do
       check_mpc_function(a) { |b| b.conj }
     end
   end
+
+  after(:all) do
+    MPFR.set_default_prec(@prec_old)
+  end
 end
-  
