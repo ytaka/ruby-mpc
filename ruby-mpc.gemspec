@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.homepage    = ""
   spec.summary     = "Ruby bindings of MPC"
   spec.description = "Ruby bindings of MPC that is C library for complex number of multiple precision"
-  spec.license = "GPLv3"
+  spec.license = "LGPL"
 
   spec.files         = `git ls-files`.split("\n")
   spec.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
